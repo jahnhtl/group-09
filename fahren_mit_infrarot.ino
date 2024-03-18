@@ -2,20 +2,20 @@
 
 #define trigPin   10
 #define echoPin   13
-#define StartPin  3
+#define StartPin  8
 #define StopPin   2
-#define IRPin_Right     A0
+#define IRPin_Right     A1
 #define IR_Right_Model  GP2Y0A21YK0F
-#define IRPin_Left      A1
+#define IRPin_Left      A0
 #define IR_Left_Model   GP2Y0A21YK0F
 
-bool Program_state = false;
+bool Program_state = true;
 int IN1 = 4;
 int IN2 = 5;
 int IN3 = 6;
 int IN4 = 7;
 const int enA = 9;
-const int enB = 8;
+const int enB = 3;
 
 SharpIR leftsensor(SharpIR::IR_Left_Model, IRPin_Left);
 SharpIR rightsensor(SharpIR::IR_Right_Model, IRPin_Right);
@@ -70,31 +70,32 @@ void loop() {
   Serial.println(diff);
 
 
-  if (diff > 10) {
+  if (diff > 0) {
     // Rechtskurve
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, HIGH);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
-    analogWrite(enA, 150);
-    analogWrite(enB, 100);
-  } else if (diff < -10) {
+    analogWrite(enA, 200);
+    analogWrite(enB, 90);
+  } else if (diff < 0) {
     // Linkskurve
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, HIGH);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
-    analogWrite(enA, 50);
-    analogWrite(enB, 150);
+    analogWrite(enA, 90);
+    analogWrite(enB, 200);
   } else {
     // Geradeaus fahren
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, HIGH);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
     analogWrite(enA, 150);
     analogWrite(enB, 150);
   }
+
 
 
   // Ultraschallmessung und Hinderniserkennung
@@ -115,15 +116,15 @@ void loop() {
     Serial.println(" cm");
   }
 
-  // Wenn ein Hindernis nahe ist, anhalten
+  // Wenn ein Hindernis in der Nähe ist, zurück fahren
   if (distance < 20) {
-    Serial.println("Hindernis erkannt - Anhalten!");
+    Serial.println("Zurück fahren");
     digitalWrite(IN1, LOW);
-    digitalWrite(IN2, LOW);
+    digitalWrite(IN2, HIGH);
     digitalWrite(IN3, LOW);
-    digitalWrite(IN4, LOW);
-    analogWrite(enA, 0);
-    analogWrite(enB, 0);
-
+    digitalWrite(IN4, HIGH);
+    analogWrite(enA, 150);
+    analogWrite(enB, 150);
+    delay(300);
 }
 }
